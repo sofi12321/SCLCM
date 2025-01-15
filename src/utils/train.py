@@ -11,8 +11,8 @@ def train(model, device, train_loader, optimizer, criterion, epoch, task_type="p
     bar = tqdm(train_loader)
     iteration = 0
     overall_loss = 0
-    auc = None
-    f1 = None
+    targets = []
+    outputs = []
     for samples in bar:
         # Take batch (batch, channels, time_len)
         data, target, patients = samples["data"], samples["label"], samples["patient"]
@@ -36,16 +36,10 @@ def train(model, device, train_loader, optimizer, criterion, epoch, task_type="p
 
             loss = criterion(output, target)
             current_loss = loss.item()
-            # Calculate metrics
-            if output.shape[-1] > 1:
-                # For multi-class
-                output = np.argmax(output.cpu().detach().numpy(), axis=1)
-                auc = accuracy_score(target.to("cpu").numpy(), output)
-                f1 = f1_score(target.to("cpu").numpy(), output)
-            else:
-                # For binary output
-                auc = roc_auc_score(target.to("cpu").numpy(), output.to("cpu").detach().numpy())
-
+            
+            outputs += output.cpu().detach().numpy().tolist()
+            targets += target.to("cpu").numpy().tolist()
+            
         # Compute gradient
         loss.backward()
         # Update params of model
@@ -53,19 +47,22 @@ def train(model, device, train_loader, optimizer, criterion, epoch, task_type="p
 
         iteration += 1
         overall_loss += current_loss
-        if auc is None:
+        if task_type == "pretrain":
             # Pretrain
             bar.set_postfix({"Epoch": epoch,
                              "Loss": format(overall_loss / iteration, '.6f')})
-        elif f1 is None:
+        elif output.shape[-1] == 1:
             # Binary classification
+            auc = roc_auc_score(targets, outputs)
             bar.set_postfix({"Epoch": epoch,
-                             "Loss": format(overall_loss / iteration, '.6f'),
-                             "ROC_AUC": format(auc, '.6f')})
+                         "Loss": format(overall_loss / iteration, '.6f'),
+                         "ROC_AUC": format(auc, '.6f')})
         else:
-            # Multi-class classification
+            # For multi-class
+            output1 = np.argmax(outputs, axis=1)
+            auc = accuracy_score(targets, output1)
+            f1 = f1_score(targets, output1)
             bar.set_postfix({"Epoch": epoch,
-                             "Loss": format(overall_loss / iteration, '.6f'),
-                             "AUC": format(auc, '.6f'),
-                             "F1": format(f1, '.6f')})
-
+                         "Loss": format(overall_loss / iteration, '.6f'),
+                         "AUC": format(auc, '.6f'),
+                         "F1": format(f1, '.6f')})
