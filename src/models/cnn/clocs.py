@@ -52,28 +52,3 @@ class ConvNet1D(nn.Module):
         x = self.fc1(x)
         x = x.reshape(batch_size, views_num, -1)
         return x
-
-
-class Classifier(nn.Module):
-    """
-    Classification model for CLOCS method
-    """
-    def __init__(self,base_model,output_dim,embedding_dim=64):
-        """
-        Prepare the network
-        :param base_model: model of class ConvNet1D
-        :param output_dim: Number of classes
-        :param embedding_dim: Length of the embedding
-        """
-        super().__init__()
-        self.base_model = base_model
-        self.layer1 = nn.Linear(embedding_dim, embedding_dim//2)
-        self.last_layer = nn.Linear(embedding_dim//2, output_dim)
-
-    def forward(self,x):
-        # Obtain embedding
-        h = self.base_model(x)
-        # Classification layers
-        h = F.relu(self.layer1(h))
-        h = self.last_layer(h)
-        return h
