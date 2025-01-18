@@ -1,3 +1,5 @@
+import torch.nn as nn
+
 class Classifier(nn.Module):
     """
     Classification model for embedding models
