@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, roc_auc_score, f1_score
 
 
-def train(model, device, train_loader, optimizer, criterion, epoch, task_type="pretrain"):
+def train_one_epoch(model, device, train_loader, optimizer, criterion, task_type="embedding"):
     # Want to update weights of model
     model.train()
     # A wrapper over data loader to show progress bar
@@ -24,7 +24,7 @@ def train(model, device, train_loader, optimizer, criterion, epoch, task_type="p
         output = model(data)
 
         # Calculate loss between prediction and ground truth
-        if task_type == "pretrain":
+        if task_type == "embedding":
             loss = criterion(output, patients)
             current_loss = loss.item()
             # * data.shape[0]
@@ -47,22 +47,19 @@ def train(model, device, train_loader, optimizer, criterion, epoch, task_type="p
 
         iteration += 1
         overall_loss += current_loss
-        if task_type == "pretrain":
+        if task_type == "embedding":
             # Pretrain
-            bar.set_postfix({"Epoch": epoch,
-                             "Loss": format(overall_loss / iteration, '.6f')})
+            bar.set_postfix({"Loss": format(overall_loss / iteration, '.6f')})
         elif output.shape[-1] == 1:
             # Binary classification
             auc = roc_auc_score(targets, outputs)
-            bar.set_postfix({"Epoch": epoch,
-                         "Loss": format(overall_loss / iteration, '.6f'),
+            bar.set_postfix({"Loss": format(overall_loss / iteration, '.6f'),
                          "ROC_AUC": format(auc, '.6f')})
         else:
             # For multi-class
             output1 = np.argmax(outputs, axis=1)
             auc = accuracy_score(targets, output1)
-            f1 = f1_score(targets, output1)
-            bar.set_postfix({"Epoch": epoch,
-                         "Loss": format(overall_loss / iteration, '.6f'),
+            f1 = f1_score(targets, output1, average="macro")
+            bar.set_postfix({"Loss": format(overall_loss / iteration, '.6f'),
                          "AUC": format(auc, '.6f'),
                          "F1": format(f1, '.6f')})
