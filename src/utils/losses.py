@@ -21,9 +21,9 @@ def obtain_criterion(task_type, output_expl):
         if output_expl.upper() == "CLOCS":
             # if output_expl in ["MS", "ML", "MSML"]:
             criterion = contrastive_loss_patient_specific
-        else:
-            # SimCLR
-            criterion = contrastive_loss_simclr
+        # else:
+        #     # SimCLR
+        #     criterion = contrastive_loss_simclr
     return criterion
 
 
