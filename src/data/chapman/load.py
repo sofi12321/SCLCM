@@ -13,16 +13,16 @@ with zipfile.ZipFile("/content/15652862", 'r') as zip_ref:
 import shutil
 
 # Load files with info 
-!wget -q https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/15653762/AttributesDictionary.xlsx
+!wget -q "https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/15653762/AttributesDictionary.xlsx"
 shutil.move("/content/AttributesDictionary.xlsx", "/content/SecondaryHDD/chapman_ecg/AttributesDictionary.xlsx")
 
-!wget -q https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/15653771/Diagnostics.xlsx
+!wget -q "https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/15653771/Diagnostics.xlsx"
 shutil.move("/content/Diagnostics.xlsx", "/content/SecondaryHDD/chapman_ecg/Diagnostics.xlsx")
 
-!wget -q https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/15651293/ConditionNames.xlsx
+!wget -q "https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/15651293/ConditionNames.xlsx"
 shutil.move("/content/ConditionNames.xlsx", "/content/SecondaryHDD/chapman_ecg/ConditionNames.xlsx")
 
-!wget -q https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/15651296/RhythmNames.xlsx
+!wget -q "https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/15651296/RhythmNames.xlsx"
 shutil.move("/content/RhythmNames.xlsx", "/content/SecondaryHDD/chapman_ecg/RhythmNames.xlsx")
 
 # Load modification code
