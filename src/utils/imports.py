@@ -32,3 +32,7 @@ def set_seed(seed):
     torch.cuda.manual_seed_all(seed)
 
 set_seed(21)
+
+# Device configuration
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
