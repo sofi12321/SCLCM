@@ -3,16 +3,16 @@ import torch
 from torch import nn
 from itertools import combinations
 
-class CLDTALoss(nn.Module):
+class BasicLoss(nn.Module):
     def __init__(self, theta = 0.5, a=0.5):
         """
-        Initializes the CLDTALoss module with specified parameters.
+        Initializes the BasicLoss module with specified parameters.
 
         Args:
             theta (float, optional): A scaling factor for the similarity matrix. Default is 0.5.
             a (float, optional): A weighting factor for the loss calculation. Default is 0.5.
         """
-        super(CLDTALoss, self).__init__()
+        super(BasicLoss, self).__init__()
         self.a = a
         self.theta = theta
 
@@ -43,14 +43,14 @@ class CLDTALoss(nn.Module):
 
     def forward(self, x, ids):
         """
-        Computes the CLDTA loss for the given input and positive pairs' identifiers.
+        Computes the loss for the given input and positive pairs' identifiers.
 
         Args:
             x (torch.Tensor): The input tensor for which the loss is computed.
             ids (torch.Tensor): A tensor containing identifiers for each input sample, used to determine positive/negative pairs.
 
         Returns:
-            torch.Tensor: The computed CLDTA loss value.
+            torch.Tensor: The computed loss value.
         """
         x = self.similarity(x)/self.theta
         x = self.sigma(x)
@@ -58,6 +58,85 @@ class CLDTALoss(nn.Module):
         mask1 = (ids == ids.T)*(1 - torch.eye(np.max(ids.shape)).to(device))
         mask2 = ids != ids.T
         loss = -(self.a*mask1*torch.log(x) + (1 - self.a)*mask2*torch.log(1 - x))
+        n = np.max(ids.shape)
+        return loss.sum() * 2 / n / (n-1)
+
+
+class HardSoftLoss(nn.Module):
+    def __init__(self, theta = 0.5, pos=0.4, hard_neg=0.4, soft_person_neg=0.1, soft_video_neg=0.1, num_video=15):
+        """
+        Initializes the HardSoftLoss class with the specified parameters.
+
+        Args:
+            theta (float, optional): A scaling factor for the similarity matrix. Default is 0.5.
+            pos (float, optional): Weight for positive samples in the loss calculation. Default is 0.4.
+            hard_neg (float, optional): Weight for hard negative samples in the loss calculation. Default is 0.4.
+            soft_person_neg (float, optional): Weight for person soft negative samples in the loss calculation. Default is 0.1.
+            soft_video_neg (float, optional): Weight for video soft negative samples in the loss calculation. Default is 0.1.
+        """
+        super(HardSoftLoss, self).__init__()
+        self.theta = theta
+        self.pos=pos
+        self.hard_neg=hard_neg
+        self.soft_person_neg=soft_person_neg
+        self.soft_video_neg = soft_video_neg
+        self.num_video = num_video
+
+    def similarity(self, x):
+        """
+        Computes the similarity matrix for the input tensor.
+
+        Args:
+            x (torch.Tensor): The input tensor.
+
+        Returns:
+            torch.Tensor: A similarity matrix where each element represents the cosine similarity between pairs of input еутыщк.
+        """
+        x_norm = nn.functional.normalize(x, dim = 1)
+        return x_norm @ x_norm.T
+
+    def sigma(self, x):
+        """
+        Applies the sigmoid function element-wise to the input tensor.
+
+        Args:
+            x (torch.Tensor): The input tensor.
+
+        Returns:
+            torch.Tensor: The result of applying the sigmoid function to each element of the input tensor.
+        """
+        return nn.functional.sigmoid(x)
+
+    def forward(self, x, ids):
+        """
+        Computes the loss based on the input features and their corresponding IDs.
+
+        Args:
+            x (torch.Tensor): The input tensor for which the loss is computed.
+            ids (torch.Tensor): A tensor containing identifiers for each input sample, used to determine positive/negative pairs.
+
+        Returns:
+            torch.Tensor: The computed loss value as a scalar tensor.
+        """
+        x = self.similarity(x)/self.theta
+        x = self.sigma(x)
+
+        pid = ids // self.num_video
+        vid = ids % self.num_video
+        pid = pid.unsqueeze(0)
+        vid = vid.unsqueeze(0)
+
+        ids = ids.unsqueeze(0)
+        mask_neg = 1*(ids != ids.T)
+        mask_vid = (vid == vid.T)*mask_neg
+        mask_pid = (pid == pid.T)*mask_neg
+
+        mask_neg = mask_neg - mask_vid - mask_pid
+
+        mask_pos = (ids == ids.T)*(1 - torch.eye(np.max(ids.shape)).to(device))
+
+        loss = -self.pos*mask_pos*torch.log(x) - self.hard_neg*mask_neg*torch.log(1 - x) - \
+                self.soft_person_neg*mask_pid*torch.log(1 - x) - self.soft_video_neg*mask_vid*torch.log(1 - x)
         n = np.max(ids.shape)
         return loss.sum() * 2 / n / (n-1)
 
