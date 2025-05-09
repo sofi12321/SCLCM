@@ -29,3 +29,18 @@ def parse_valence(labels, threshold = 20):
                 tmp.append(0)
         result.append(np.array(tmp))
     return np.array(result).T
+
+def reorder_channels_deap(data):
+    deap_channels = np.array([
+        'FP1', 'AF3', 'F3', 'F7', 'FC5', 'FC1', 'C3', 'T7', 'CP5',
+        'CP1', 'P3', 'P7', 'PO3', 'O1', 'OZ', 'PZ', 'FP2', 'AF4',
+        'FZ', 'F4', 'F8', 'FC6', 'FC2', 'CZ', 'C4', 'T8', 'CP6',
+        'CP2', 'P4', 'P8', 'PO4', 'O2'
+    ])
+    chosen_channels_32 = np.array([
+        'FP1', 'FP2', 'AF4', 'AF3', 'F7', 'F3', 'FZ', 'F4', 'F8', 'FC6',
+        'FC2', 'FC1', 'FC5', 'T7', 'C3', 'CZ', 'C4', 'T8', 'CP6', 'CP2',
+        'CP1', 'CP5', 'P7', 'P3', 'PZ', 'P4', 'P8', 'PO4', 'PO3', 'O1',
+        'OZ', 'O2'])
+
+    return chosen_channels_32, data[:,:, np.sum((deap_channels.reshape(-1, 1) == chosen_channels_32).astype(int)*np.array(range(1,len(deap_channels) + 1)).reshape(-1, 1), axis=0) - 1, :]
