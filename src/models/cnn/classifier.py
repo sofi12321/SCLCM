@@ -23,3 +23,14 @@ class Classifier(nn.Module):
         h = F.relu(self.layer1(h))
         h = self.last_layer(h)
         return h
+
+
+def get_sequential_classifier(encoder, num_classes, emb_dim=128):
+    return nn.Sequential(
+        encoder,
+        nn.Linear(emb_dim, 1024),
+        nn.LeakyReLU(),
+        nn.BatchNorm1d(1024),
+        nn.Dropout(p = 0.3),
+        nn.Linear(1024, num_classes),
+    )
