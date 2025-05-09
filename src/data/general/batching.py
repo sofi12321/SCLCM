@@ -1,5 +1,96 @@
 from collections import defaultdict
 import random
+import pandas as pd
+import itertools
+from typing import (
+    Generic,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Sized,
+    TypeVar,
+    Union,
+)
+from torch.utils.data import Sampler
+
+class SubsetRandomSampler(Sampler[List[int]]):
+    r"""Samples elements randomly from a given list of indices, without replacement.
+
+    Args:
+        indices (sequence): a sequence of indices
+        generator (Generator): Generator used in sampling.
+    """
+
+    group_indices: Sequence[int]
+
+    def __init__(self, group_indices: Sequence[int], batch_size: int, need_update = True, drop_last_batch=False, num_groups_in_batch=None, generator=None) -> None:
+
+        # Since collections.abc.Iterable does not check for `__getitem__`, which
+        # is one way for an object to be an iterable, we don't do an `isinstance`
+        # check here.
+        if (
+            not isinstance(batch_size, int)
+            or isinstance(batch_size, bool)
+            or batch_size <= 4
+        ):
+            raise ValueError(
+                f"batch_size should be a positive integer value, but got batch_size={batch_size}"
+            )
+        if not isinstance(drop_last_batch, bool):
+            raise ValueError(
+                f"drop_last_batch should be a boolean value, but got drop_last_batch={drop_last_batch}"
+            )
+
+        if batch_size == True:
+            batch_size = 4
+        elif batch_size == False:
+            batch_size = len(group_indices)
+
+        if batch_size < 4:
+            batch_size = 4
+
+        self.batch_size = batch_size
+        self.drop_last = drop_last_batch
+        self.need_update = need_update
+
+        self.group_indices = group_indices
+        self.indices = list(range(len(group_indices)))
+        self.generator = generator
+
+
+        if num_groups_in_batch is None:
+            num_groups_in_batch = batch_size // 2
+        if num_groups_in_batch <= 1:
+            num_groups_in_batch = 2
+        self.num_groups_in_batch = num_groups_in_batch
+
+        self.batches = []
+        self.batches = self.get_batches()
+
+    def __iter__(self) -> Iterator[int]:
+        for batch in self.batches:
+            yield batch
+
+    def get_batches(self):
+        if self.need_update or (self.batches == []):
+            num = 0
+            batches = []
+            while batches == []:
+                batches = create_batches(self.batch_size, self.group_indices)
+                num+=1
+                if num >= 4:
+                    if batches == []:
+                        batches = [[]]
+                    break
+            return batches
+        return self.batches
+
+    def __len__(self) -> int:
+        self.batches = self.get_batches()
+        return len(self.batches)
+
 
 def create_batches(batch_size, group_labels, kk = 3):
     # Группируем датапоинты по их номерам групп
@@ -68,6 +159,7 @@ def create_batches(batch_size, group_labels, kk = 3):
             break
 
     return batches
+
 
 # Пример использования
 # batch_size = 64
