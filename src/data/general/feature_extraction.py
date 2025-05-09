@@ -117,3 +117,21 @@ def extract_dasm(data, channels):
     de_right = data[:,:,mask_right,:]
     dasm = de_left - de_right
     return dasm
+
+def extract_rasm(data, channels):
+    channels_left = np.array([
+        'FP1', 'F7', 'F3', 'T7', 'P7', 'C3',
+        'P3', 'O1', 'AF3', 'FC5', 'FC1', 'CP5',
+        'CP1', 'PO3'
+    ])
+    channels_right = np.array([
+        'FP2', 'F8', 'F4', 'T8', 'P8', 'C4',
+        'P4', 'O2', 'AF4', 'FC6', 'FC2', 'CP6',
+        'CP2', 'PO4'
+    ])
+    mask_left = np.array([np.where(idx == channels)[0][0] for idx in channels_left])
+    de_left = data[:,:,mask_left,:]
+    mask_right = np.array([np.where(idx == channels)[0][0] for idx in channels_right])
+    de_right = data[:,:,mask_right,:]
+    rasm = de_left/de_right
+    return rasm
