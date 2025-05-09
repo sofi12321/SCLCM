@@ -135,3 +135,19 @@ def extract_rasm(data, channels):
     de_right = data[:,:,mask_right,:]
     rasm = de_left/de_right
     return rasm
+
+def extract_dcau(data, channels):
+    channels_frontal = np.array([
+        'FC5', 'FC1', 'FC2', 'FC6', 'F7', 'F3',
+        'FZ', 'F4', 'F8', 'FP1', 'FP2'
+    ])
+    channels_posterior = np.array([
+        'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3',
+        'PZ', 'P4', 'P8', 'O1', 'O2'
+    ])
+    mask_frontal = np.array([np.where(idx == channels)[0][0] for idx in channels_frontal])
+    de_frontal = data[:,:,mask_frontal,:]
+    mask_posterior = np.array([np.where(idx == channels)[0][0] for idx in channels_posterior])
+    de_posterior = data[:,:,mask_posterior,:]
+    dcau = de_frontal - de_posterior
+    return dcau
