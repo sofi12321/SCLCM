@@ -58,3 +58,45 @@ def load_deap_raw( length=128, general_path =  r"/content/DEAP/"):
     num_video, subj_list, video_list = deap_metadata()
 
     return data, session_labels, pid_video, num_video, subj_list, video_list, channels
+
+
+def load_deap_raw_psd(data_path='deap_raw_1s_data.dat',
+                 labels_path='deap_raw_1s_labels.dat',
+                 label_by="valence", lower=3.5, higher = 6.5, length=128
+                       ):
+    num = 60 * 128 // length
+    data = np.fromfile(data_path).reshape(-1, num , 1, 32, length)
+    data = np.moveaxis(data, 1, 3).reshape(-1, 1, 32, num*length)
+    labels = np.fromfile(labels_path).reshape(32*40, 4)
+    pid_video = np.array([v + p *40 for p in range(32) for v in range(40)])
+
+    print(data.shape)
+    # data = data
+    # N, 1, 32, length*num
+
+    if label_by == "valence":
+        labels_no_split = labels.reshape(32, 60, 40, 4)[:,0, :,:].reshape(32, 40, 4)
+        mask_labels = parse_valence(labels_no_split)
+        mask_labels = mask_labels[:, None, :].repeat(60, axis=1).reshape(-1) == 1
+
+        pid_video = pid_video[mask_labels]
+        data = data[mask_labels]
+        session_labels = (labels[:, 0].reshape(-1) > 5).astype(int)
+        session_labels = session_labels[mask_labels]
+    else:
+        session_labels = (labels[:, 1] > 5).astype(int)
+
+    all_data = np.zeros((0, 1, data.shape[2], 129))
+    for ind in range(data.shape[0]):
+        arr = np.zeros((0, 129))
+        for ch in range(data.shape[2]):
+            arr = np.concatenate([arr, [compute_psd(data[ind, 0, ch],
+                    fs = 128, sec = 60, nfft = 256, noverlap = 128)[1]]], axis=0)
+        all_data = np.concatenate([all_data, [[arr]]], axis=0)
+
+    # Reorder channels
+    channels, data = reorder_channels_deap(all_data)
+    # Get metadata
+    num_video, subj_list, video_list = deap_metadata()
+
+    return data, session_labels, pid_video, num_video, subj_list, video_list, channels
