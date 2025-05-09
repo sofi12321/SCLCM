@@ -1,5 +1,27 @@
 import numpy as np
 
+def reorder_channels_seed(data, num_channels=62):
+    seed_channels = np.array(['FP1', 'FPZ', 'FP2', 'AF3', 'AF4', 'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5', 'FC3', 'FC1', 'FCZ', 'FC2', 'FC4', 'FC6', 'FT8', 'T7', 'C5', 'C3', 'C1', 'CZ', 'C2', 'C4', 'C6', 'T8', 'TP7', 'CP5', 'CP3', 'CP1', 'CPZ', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POZ', 'PO4', 'PO6', 'PO8', 'CB1', 'O1', 'OZ', 'O2', 'CB2'])
+    if num_channels == 62:
+        chosen_channels = np.array([
+            'FP1', 'FPZ', 'FP2', 'AF4', 'AF3',
+            'F7', 'F5', 'F3', 'F1', 'FZ', 'F2', 'F4', 'F6', 'F8',
+            'FT8', 'FC6', 'FC4', 'FC2', 'FCZ', 'FC1', 'FC3', 'FC5', 'FT7',
+            'T7', 'C5', 'C3', 'C1', 'CZ', 'C2', 'C4', 'C6', 'T8',
+            'TP8', 'CP6', 'CP4', 'CP2', 'CPZ', 'CP1', 'CP3', 'CP5', 'TP7',
+            'P7', 'P5', 'P3', 'P1', 'PZ', 'P2', 'P4', 'P6', 'P8',
+            'PO8', 'PO6', 'PO4', 'POZ', 'PO3', 'PO5', 'PO7',
+            'CB1', 'O1', 'OZ', 'O2', 'CB2'])
+    else:
+        chosen_channels = np.array([
+            'FP1', 'FP2', 'AF4', 'AF3', 'F7', 'F3', 'FZ', 'F4', 'F8', 'FC6',
+            'FC2', 'FC1', 'FC5', 'T7', 'C3', 'CZ', 'C4', 'T8', 'CP6', 'CP2',
+            'CP1', 'CP5', 'P7', 'P3', 'PZ', 'P4', 'P8', 'PO4', 'PO3', 'O1',
+            'OZ', 'O2'])
+
+    return chosen_channels, data[:, :, np.sum((seed_channels.reshape(-1, 1) == chosen_channels).astype(int)*np.array(range(1,len(seed_channels)+1)).reshape(-1, 1), axis=0) - 1, :]
+
+
 def make_SEED_labels(pos_groupping="trial"):
     """
     Generates SEED labels and positional groupings based on the specified grouping method.
