@@ -151,3 +151,38 @@ def extract_dcau(data, channels):
     de_posterior = data[:,:,mask_posterior,:]
     dcau = de_frontal - de_posterior
     return dcau
+
+def reshape_3d(data, channels, num_channels):
+    matrix_62 = np.array([
+        np.array([0, 0, 0, "FP1", "FPZ", "FP2", 0, 0, 0]),
+        np.array([0, 0, 0, "AF3", 0, "AF4", 0, 0, 0]),
+        np.array(["F7", "F5", "F3", "F1", "FZ", "F2", "F4", "F6", "F8"]),
+        np.array(["FT7", "FC5", "FC3", "FC1", "FCZ", "FC2", "FC4", "FC6", "FT8"]),
+        np.array(["T7", "C5", "C3", "C1", "CZ", "C2", "C4", "C6", "T8"]),
+        np.array(["TP7", "CP5", "CP3", "CP1", "CPZ", "CP2", "CP4", "CP6", "TP8"]),
+        np.array(["P7", "P5", "P3", "P1", "PZ", "P2", "P4", "P6", "P8"]),
+        np.array([0, "PO7", "PO5", "PO3", "POZ", "PO4", "PO6", "PO8", 0]),
+        np.array([0, 0, "CB1", "O1", "OZ", "O2", "CB2", 0, 0])
+    ])
+    matrix_32 = np.array([
+        np.array([0, 0, 0, "FP1", 0, "FP2", 0, 0, 0]),
+        np.array([0, 0, 0, "AF3", 0, "AF4", 0, 0, 0]),
+        np.array(["F7", 0, "F3", 0, "FZ", 0, "F4", 0, "F8"]),
+        np.array([0, "FC5", 0, "FC1", 0, "FC2", 0, "FC6", 0]),
+        np.array(["T7", 0, "C3", 0, "CZ", 0, "C4", 0, "T8"]),
+        np.array([0, "CP5", 0, "CP1", 0, "CP2", 0, "CP6", 0]),
+        np.array(["P7", 0, "P3", 0, "PZ", 0, "P4", 0, "P8"]),
+        np.array([0, 0, 0, "PO3", 0, "PO4", 0, 0, 0]),
+        np.array([0, 0, 0, "O1", "OZ", "O2", 0, 0, 0])
+    ])
+    if num_channels == 62:
+        matrix = matrix_62
+    else:
+        matrix = matrix_32
+        
+    data = data[:, :, np.sum((channels.reshape(-1, 1) == matrix.reshape(-1)).astype(int)*np.array(range(1,len(channels)+1)).reshape(-1, 1), axis=0) - 1, :]
+    data[:, :, matrix.reshape(-1) == '0'] = 0
+
+    data = np.moveaxis(data, 3, 1).reshape((data.shape[0], data.shape[-1], 9, 9))
+    in_channels = 128
+    return data, in_channels, matrix
