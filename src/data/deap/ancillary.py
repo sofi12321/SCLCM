@@ -7,6 +7,21 @@ def deap_metadata():
     video_list = np.array([0,1,2,3,4,5,6,7])
     return num_video, subj_list, video_list
 
+def make_DEAP_labels(pos_groupping="trial"):
+    # labels = np.array([1, 0, -1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 0, 1, -1])
+    # labels_edited = np.concatenate([labels for _ in range(45)])
+
+    if pos_groupping == "video":
+        pid_video = np.array([v  for p in range(32) for v in range(40)])
+    elif pos_groupping == "person":
+        pid_video = np.array([p for p in range(32) for v in range(40)])
+    elif pos_groupping == "trial":
+        pid_video = np.array([v + p*40 for p in range(32) for v in range(40)])
+    else:
+        pid_video = list(range(32*40))
+    pid_video = np.array(pid_video)
+    return pid_video
+    
 def parse_valence(labels, threshold = 20):
     valence = (labels[:,:,0] > 6)*1 + ((labels[:,:,0] <= 6) & (labels[:,:,0] >= 5))*2
     df = pd.DataFrame(valence, columns = [f"video_{i+1}" for i in range(valence.shape[1])])
@@ -29,6 +44,39 @@ def parse_valence(labels, threshold = 20):
                 tmp.append(0)
         result.append(np.array(tmp))
     return np.array(result).T
+
+def subset_DEAP_subject(data, labels, pids, subj_list):
+    """
+    Extracts a subset of data, labels, and participant IDs for specified subjects from the SEED dataset.
+
+    Args:
+        data (numpy.ndarray): The dataset containing the data samples.
+        labels (numpy.ndarray): The array of labels corresponding to the data samples.
+        pids (numpy.ndarray): The array of participant IDs corresponding to the data samples.
+        subj_list (list of int): A list of subject IDs for which the data, labels, and pids should be extracted.
+
+    Returns:
+        A tuple containing:
+            - subset_data (numpy.ndarray): The subset of data samples for the specified subjects.
+            - subset_labels (numpy.ndarray): The subset of labels for the specified subjects.
+            - subset_pids (numpy.ndarray): The subset of participant IDs for the specified subjects.
+    """
+    sh = [0] + np.array(data.shape).tolist()[1:]
+    subset_data = np.zeros(sh)
+    subset_labels = []
+    subset_pids = []
+
+    for subject_id in range(32):
+        n_start = subject_id * 40
+        n_end = (subject_id + 1) * 40
+
+        if subject_id in subj_list:
+            subset_labels = np.concatenate([subset_labels, labels[n_start:n_end]])
+            subset_data = np.concatenate([subset_data , data[n_start:n_end]])
+            subset_pids = np.concatenate([subset_pids, pids[n_start:n_end]])
+
+    return subset_data, subset_labels, subset_pids
+    
 
 def reorder_channels_deap(data):
     deap_channels = np.array([
