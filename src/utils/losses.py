@@ -3,6 +3,65 @@ import torch
 from torch import nn
 from itertools import combinations
 
+class CLDTALoss(nn.Module):
+    def __init__(self, theta = 0.5, a=0.5):
+        """
+        Initializes the CLDTALoss module with specified parameters.
+
+        Args:
+            theta (float, optional): A scaling factor for the similarity matrix. Default is 0.5.
+            a (float, optional): A weighting factor for the loss calculation. Default is 0.5.
+        """
+        super(CLDTALoss, self).__init__()
+        self.a = a
+        self.theta = theta
+
+    def similarity(self, x):
+        """
+        Computes the similarity matrix for the input tensor.
+
+        Args:
+            x (torch.Tensor): The input tensor.
+
+        Returns:
+            torch.Tensor: A similarity matrix where each element represents the cosine similarity between pairs of input еутыщк.
+        """
+        x_norm = nn.functional.normalize(x, dim = 1)
+        return x_norm @ x_norm.T
+
+    def sigma(self, x):
+        """
+        Applies the sigmoid function element-wise to the input tensor.
+
+        Args:
+            x (torch.Tensor): The input tensor.
+
+        Returns:
+            torch.Tensor: The result of applying the sigmoid function to each element of the input tensor.
+        """
+        return nn.functional.sigmoid(x)
+
+    def forward(self, x, ids):
+        """
+        Computes the CLDTA loss for the given input and positive pairs' identifiers.
+
+        Args:
+            x (torch.Tensor): The input tensor for which the loss is computed.
+            ids (torch.Tensor): A tensor containing identifiers for each input sample, used to determine positive/negative pairs.
+
+        Returns:
+            torch.Tensor: The computed CLDTA loss value.
+        """
+        x = self.similarity(x)/self.theta
+        x = self.sigma(x)
+        ids = ids.unsqueeze(0)
+        mask1 = (ids == ids.T)*(1 - torch.eye(np.max(ids.shape)).to(device))
+        mask2 = ids != ids.T
+        loss = -(self.a*mask1*torch.log(x) + (1 - self.a)*mask2*torch.log(1 - x))
+        n = np.max(ids.shape)
+        return loss.sum() * 2 / n / (n-1)
+
+
 def obtain_criterion(task_type, output_expl):
     """
     Return function to calculate loss. Appropi
