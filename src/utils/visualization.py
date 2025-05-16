@@ -2,7 +2,7 @@ import matplotlib.colors as mcolors
 import umap.umap_ as umap
 
 
-def plot_pca_tsne_pids(title, naming, model, test_loader, num_video=15, num_elements=600, show_vid=True):
+def plot_pca_tsne_pids(title, naming, model, test_loader, num_video=15, num_elements=600, show_vid=True, load_model=True):
     """
     Plots PCA and t-SNE visualizations for the given model and test data.
 
@@ -26,8 +26,11 @@ def plot_pca_tsne_pids(title, naming, model, test_loader, num_video=15, num_elem
     with torch.no_grad():
         # pred = []
         for el in test_loader:
-            X += model(el['data'].to(device)).cpu().tolist()
-            # X += el['data'].reshape(-1, 62*5*20).tolist()
+            if load_model:
+                X += model(el['data'].to(device)).cpu().tolist()
+            else:
+                X += el['data'].reshape(-1, el['data'].shape[-1]*el['data'].shape[-2]*el['data'].shape[-3]).tolist()
+            
             y += el['label'].tolist()
             pids += el['patient'].tolist()
             # pred += ft_model(el['data'].to(device)).cpu().tolist()
