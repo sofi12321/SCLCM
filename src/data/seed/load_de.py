@@ -1,4 +1,5 @@
 import numpy as np
+from data.seed.ancillary import make_SEED_labels, seed_metadata, reorder_channels_seed
 
 def load_seed_de(data_path='EEG_Dataset/SEED/seed_de_new.dat', time_len=250, pos_groupping="trial", num_channels=62, data_shape=None, move_axis=None):
     if data_shape is None:
