@@ -63,7 +63,7 @@ class BasicLoss(nn.Module):
 
 
 class HardSoftLoss(nn.Module):
-    def __init__(self, theta = 0.5, pos=0.4, hard_neg=0.4, soft_person_neg=0.1, soft_video_neg=0.1, num_video=15):
+    def __init__(self, theta = 0.5, pos=0.4, hard_neg=0.4, soft_person_neg=0.1, soft_video_neg=0.1, num_video=15, device='cpu'):
         """
         Initializes the HardSoftLoss class with the specified parameters.
 
@@ -81,6 +81,7 @@ class HardSoftLoss(nn.Module):
         self.soft_person_neg=soft_person_neg
         self.soft_video_neg = soft_video_neg
         self.num_video = num_video
+        self.device = device
 
     def similarity(self, x):
         """
@@ -133,7 +134,7 @@ class HardSoftLoss(nn.Module):
 
         mask_neg = mask_neg - mask_vid - mask_pid
 
-        mask_pos = (ids == ids.T)*(1 - torch.eye(np.max(ids.shape)).to(device))
+        mask_pos = (ids == ids.T)*(1 - torch.eye(np.max(ids.shape)).to(self.device))
 
         loss = -self.pos*mask_pos*torch.log(x) - self.hard_neg*mask_neg*torch.log(1 - x) - \
                 self.soft_person_neg*mask_pid*torch.log(1 - x) - self.soft_video_neg*mask_vid*torch.log(1 - x)
