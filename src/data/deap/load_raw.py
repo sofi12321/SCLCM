@@ -43,19 +43,15 @@ def load_deap_raw( length=128, general_path =  r"/content/DEAP/"):
     labels = labels[mask_labels]
     data = all_data[mask_labels]
     pid_video = pid_video[mask_labels]
-
-    session_labels = (labels[:, 0] > 5).astype(int)
-
-    num_video, subj_list, video_list  = deap_metadata()
-
-    session_labels = session_labels.repeat(60)
-    pid_video= pid_video.repeat(60)
-    chs, data = reorder_channels_deap(data.reshape(-1, 1, 32, length))
-
+    
     # Reorder channels
-    channels, data = reorder_channels_deap(data)
+    channels, data = reorder_channels_deap(data.reshape(-1, 1, 32, length))
+
     # Get metadata
     num_video, subj_list, video_list = deap_metadata()
+    session_labels = (labels[:, 0] > 5).astype(int)
+    session_labels = session_labels.repeat(60)
+    pid_video= pid_video.repeat(60)
 
     return data, session_labels, pid_video, num_video, subj_list, video_list, channels
 
