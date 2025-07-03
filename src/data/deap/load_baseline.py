@@ -1,4 +1,7 @@
 import numpy as np
+from data.deap.ancillary import deap_metadata, parse_valence, reorder_channels_deap
+from data.general.feature_extraction import compute_psd
+
 
 def load_deap_baseline(data_path='EEG_Dataset/DEAP/deap_baseline1s_data.dat',
                  labels_path='EEG_Dataset/DEAP/deap_baseline1s_labels.dat',
