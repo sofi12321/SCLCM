@@ -1,6 +1,8 @@
-from tqdm import tqdm
+import tqdm
 import torch
 import numpy as np
+import time
+from utils.train import train_one_epoch
 
 def test_embedding(model, device, test_loader, criterion):
     """
@@ -19,7 +21,7 @@ def test_embedding(model, device, test_loader, criterion):
     model = model.to(device)
     model.eval()
     test_loss = 0
-    bar = tqdm(test_loader, disable=False)
+    bar = tqdm.tqdm(test_loader, disable=False)
     ind = 0
     with torch.no_grad():
         for samples in bar:
