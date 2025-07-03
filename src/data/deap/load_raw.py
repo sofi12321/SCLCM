@@ -1,4 +1,8 @@
 import numpy as np
+import os 
+import scipy
+from data.deap.ancillary import make_DEAP_labels, deap_metadata, parse_valence, reorder_channels_deap
+from data.general.feature_extraction import compute_psd
 
 def load_deap_raw( length=128, general_path =  r"/content/DEAP/"):
     num = 60 * 128 // length
