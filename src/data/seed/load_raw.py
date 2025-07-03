@@ -1,4 +1,6 @@
 import numpy as np 
+import tqdm
+from data.seed.ancillary import seed_metadata, reorder_channels_seed
 
 def load_seed_raw(num_channels=62, segment_length=200, segment_num=60, general_path =  r"/content/drive/MyDrive/EEG_Dataset/SEED/"):
     if segment_length*segment_num > 37000:
