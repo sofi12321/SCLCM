@@ -96,6 +96,7 @@ datasets_metadata = {
     "deap_de": { 
         "data_path": "EEG_Dataset/DEAP/deap_de_data_new.dat",
         "labels_path": "EEG_Dataset/DEAP/deap_de_labels_new.dat",
+        "data_shape" : None,
         "move_axis": [2, 1],
         "label_by": "valence",
         "lower": 3.5,
