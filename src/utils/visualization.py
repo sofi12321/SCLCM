@@ -1,5 +1,11 @@
 import matplotlib.colors as mcolors
 import umap.umap_ as umap
+import torch
+from data.general.train_test_split import train_test_split
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 
 def plot_pca_tsne_pids(title, naming, model, test_loader, num_video=15, num_elements=600, show_vid=True, load_model=True):
