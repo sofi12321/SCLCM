@@ -1,8 +1,8 @@
 from sklearn.model_selection import train_test_split
 import numpy as np
 from torch.utils.data import DataLoader
-from dataset import PreloadedDataset
-from batching import SubsetRandomSampler
+from data.general.dataset import PreloadedDataset
+from data.general.batching import SubsetRandomSampler
 
 def split_data(data, session_labels, pid_video,
                num_video, subj_list, video_list,
