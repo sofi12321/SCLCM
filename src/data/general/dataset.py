@@ -1,7 +1,10 @@
 import pickle
-import torchvision
+import random 
 import numpy as np
+import torch
+import torchvision
 from torch.utils.data import Dataset
+
 
 class PreloadedDataset(Dataset):
     def __init__(self, data, labels, pids, add_data=None, augmentations=None, need_norm=False):
