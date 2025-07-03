@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import signal
 from scipy.integrate import simpson
+import matplotlib.pyplot as plt
 
 def extract_de(epochs, channels = 62,
                num_band = 5, bands = [1, 4, 8, 13, 31, 50], fq = 200,
