@@ -1,7 +1,9 @@
-from tqdm import tqdm
+import tqdm
+import time
 import torch
 import numpy as np
 from sklearn.metrics import accuracy_score, roc_auc_score, f1_score
+from utils.train import train_one_epoch
 
 def test_classification(model, device, test_loader, criterion):
     """
@@ -21,7 +23,7 @@ def test_classification(model, device, test_loader, criterion):
     model = model.to(device)
     model.eval()
     test_loss = 0
-    bar = tqdm(test_loader)
+    bar = tqdm.tqdm(test_loader)
     score = 0
     targets = []
     outputs = []
