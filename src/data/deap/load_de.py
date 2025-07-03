@@ -1,4 +1,5 @@
 import numpy as np 
+from data.deap.ancillary import make_DEAP_labels, deap_metadata, parse_valence, reorder_channels_deap
 
 def load_deap_de(data_path='/content/drive/MyDrive/EEG_Dataset/DEAP/deap_de_data_new.dat',
                  labels_path='/content/drive/MyDrive/EEG_Dataset/DEAP/deap_de_labels_new.dat',
