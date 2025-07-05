@@ -3,17 +3,22 @@ import os
 import scipy
 from data.deap.ancillary import make_DEAP_labels, deap_metadata, parse_valence, reorder_channels_deap
 from data.general.feature_extraction import compute_psd
-
-def load_deap_raw( length=128, general_path =  r"/content/DEAP/"):
+import zipfile
+    
+def load_deap_raw( length=128, general_path =  r"EEG_Dataset/DEAP/data_preprocessed_matlab.zip"):
     num = 60 * 128 // length
+    save_path = "/".join(general_path.split("/")[:-1]) + "/RAW/"
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
 
     # !mkdir DEAP
-    !unzip -q /content/drive/MyDrive/EEG_Dataset/DEAP/data_preprocessed_matlab.zip -d DEAP
-
+    # !unzip -q /content/drive/MyDrive/EEG_Dataset/DEAP/data_preprocessed_matlab.zip -d DEAP
+    with zipfile.ZipFile(general_path, 'r') as zip_ref:
+        zip_ref.extractall(general_path)
 
     # Prepare to load data
     # Sort files to be loaded by pid and date in name
-    all_files = [f for f in os.listdir(general_path) if (f[-3:] == "mat") and ("s" == f[0])]
+    all_files = [f for f in os.listdir(save_path) if (f[-3:] == "mat") and ("s" == f[0])]
     all_files = sorted(all_files,
                         key=lambda x: int(x.split(".")[0][1:]))
     print(all_files)
@@ -24,7 +29,7 @@ def load_deap_raw( length=128, general_path =  r"/content/DEAP/"):
     all_data = np.zeros((0, num , 1, 32, length))
 
     for f in all_files:
-        inf = scipy.io.loadmat(os.path.join(general_path, f))
+        inf = scipy.io.loadmat(os.path.join(save_path, f))
 
         d = inf["data"][:, :32, -num*length:]
         d = np.moveaxis(d.reshape((-1, 1, 32, num, length)), 3, 1)
@@ -37,8 +42,8 @@ def load_deap_raw( length=128, general_path =  r"/content/DEAP/"):
         print(all_data.shape)
         print(labels.shape)
 
-    all_data.tofile('deap_raw_1s_data.dat')
-    labels.tofile('deap_raw_1s_labels.dat')
+    all_data.tofile(save_path[:-4] + 'deap_raw_1s_data.dat')
+    labels.tofile(save_path[:-4] + 'deap_raw_1s_labels.dat')
 
     pid_video = np.array([v + p *40 for p in range(32) for v in range(40)])
 
