@@ -8,7 +8,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 
-def plot_pca_tsne_pids(title, naming, model, test_loader, num_video=15, num_elements=600, show_vid=True, load_model=True):
+def plot_pca_tsne_pids(title, naming, model, test_loader, num_video=15, num_elements=600, show_vid=True, load_model=True, device='cpu'):
     """
     Plots PCA and t-SNE visualizations for the given model and test data.
 
