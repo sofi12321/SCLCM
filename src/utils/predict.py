@@ -18,19 +18,17 @@ def get_predictions(model, test_loader, device='cpu'):
     y = np.array(y)
     return X, y
 
-def print_classification_report(model, test_loader, num_classes, device='cpu')
+def print_classification_report(ft_model, test_loader_ft, num_classes, device='cpu')
         
+    XX, yy = get_predictions(ft_model, test_loader_ft, device=device)
     if num_classes == 2:
-        XX, yy = get_predictions(ft_model, test_loader_ft, device=device)
         preds = (XX > 0.5).astype(int)
         print(classification_report(yy, preds, target_names=['negative','positive']))
 
     elif num_classes == 3:
-        XX, yy = get_predictions(ft_model, test_loader_ft, device=device)
         preds = np.argmax(XX, axis=1)
         print(classification_report(yy, preds, target_names=['negative','neutral', 'positive']))
     elif num_classes > 3:
-        XX, yy = get_predictions(ft_model, test_loader_ft, device=device)
         preds = np.argmax(XX, axis=1)
         print(classification_report(yy, preds, target_names=(np.array(range(num_classes))).astype(str))
     else:
