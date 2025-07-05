@@ -129,7 +129,7 @@ class PreloadedDataset(Dataset):
         # dim = (fr, ch, time)
         if self.need_norm:
             data = self.normalize_last_axis(data)
-            if add_data != "":
+            if self.add_data != "":
                 add_data = self.normalize_last_axis(add_data)
 
         data = torch.from_numpy(data).float()
