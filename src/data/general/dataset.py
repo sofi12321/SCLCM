@@ -124,12 +124,15 @@ class PreloadedDataset(Dataset):
             else:
                 print("Unexpected augmentation. Send unchanged datapoint")
 
-
+        # Manage additional data
+        add_data = ""
+        if self.add_data:
+            add_data = self.add_data[index].copy()
         # Swap channel and frequency to have
         # dim = (fr, ch, time)
         if self.need_norm:
             data = self.normalize_last_axis(data)
-            if self.add_data != "":
+            if add_data != "":
                 add_data = self.normalize_last_axis(add_data)
 
         data = torch.from_numpy(data).float()
