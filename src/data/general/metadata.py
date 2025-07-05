@@ -1,9 +1,10 @@
 general_metadata = {
     "batch_size": 512,
-    "split_by": "subject", # "subject" - for subject-independent; "random" - subject dependent
-    "augmentations": ["frequency_noise","mask_channel","mix_dtpts"],
     "additional_processing": None, # None, "DASM", "RASM" or "DCAU"
-    "spatial_transform": False
+    "spatial_transform": False,
+    "augmentations": ["frequency_noise","mask_channel","mix_dtpts"],
+    "split_by": "subject", # "subject" - for subject-independent; "random" - subject dependent
+    "test_fraction": 0.3
 }
 datasets_metadata = {
     "seed_raw": { # one second lenght
