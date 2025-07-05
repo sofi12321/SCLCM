@@ -18,7 +18,7 @@ def get_predictions(model, test_loader, device='cpu'):
     y = np.array(y)
     return X, y
 
-def print_classification_report(ft_model, test_loader_ft, num_classes, device='cpu')
+def print_classification_report(ft_model, test_loader_ft, num_classes, device='cpu'):
         
     XX, yy = get_predictions(ft_model, test_loader_ft, device=device)
     if num_classes == 2:
