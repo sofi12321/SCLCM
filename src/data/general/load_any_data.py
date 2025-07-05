@@ -102,4 +102,4 @@ def load_data_by_selection(selection, general_metadata, dataset_metadata, channe
         data = data[: , :, np.isin(channels, channels_cut), :] 
         channels = channels_cut
 
-    return data, session_labels, pid_video, num_video, channels, need_norm, in_channels, in_features, num_classes, num_channels
+    return data, session_labels, pid_video, num_video, subj_list, video_list, channels, need_norm, in_channels, in_features, num_classes, num_channels
