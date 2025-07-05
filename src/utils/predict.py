@@ -30,6 +30,6 @@ def print_classification_report(ft_model, test_loader_ft, num_classes, device='c
         print(classification_report(yy, preds, target_names=['negative','neutral', 'positive']))
     elif num_classes > 3:
         preds = np.argmax(XX, axis=1)
-        print(classification_report(yy, preds, target_names=(np.array(range(num_classes))).astype(str))
+        print(classification_report(yy, preds, target_names=(np.array(range(num_classes))).astype(str)))
     else:
         print(f"Unfortunately, the number of classes {num_classes} is not appropriate for the classification report")
