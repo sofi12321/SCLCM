@@ -1,7 +1,7 @@
 import copy
 import time
 from torch.quantization import quantize_fx
-from utils.model_size_eval import print_model_size, count_parameters, count_parameters_short, get_model_size, get_parameters_num
+from utils.model_size_eval import print_model_size, count_parameters_detailed, count_parameters_short, get_model_size, get_parameters_num
 from utils.test_run_classification import test_classification
 
 def quantize_model(ft_model, test_loader_ft, device = 'cpu', backend = "fbgemm"):
@@ -30,7 +30,7 @@ def quantize_model(ft_model, test_loader_ft, device = 'cpu', backend = "fbgemm")
 def eval_quantization(model_quantized, test_loader_ft, num_classes, device='cpu'):
     # Evaluate size
     model_size = print_model_size(model_quantized)
-    total_params = count_parameters(model_quantized)
+    total_params = count_parameters_detailed(model_quantized)
     print()
 
     # Evaluate performance
