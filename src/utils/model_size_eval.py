@@ -1,4 +1,6 @@
 from prettytable import PrettyTable
+import torch
+import os
 
 def print_model_size(mdl):
     print("Model size:", end=" ")
