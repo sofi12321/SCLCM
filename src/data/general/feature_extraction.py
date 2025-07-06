@@ -187,3 +187,10 @@ def reshape_3d(data, channels, num_channels):
     data = np.moveaxis(data, 3, 1).reshape((data.shape[0], data.shape[-1], 9, 9))
     in_channels = 128
     return data, in_channels, matrix
+
+def subtract_baseline(data, baseline_len=3, step = 128):
+    # data has a shape (-1, freq, channels, time)
+    dtpts, freq, ch, time = data.shape
+    baseline = data[:, :, :, :baseline_len*step].reshape((dtpts, freq, ch, baseline_len, step)).mean(axis=-2)
+    baseline = baseline[:, :, :, None, :].repeat((time - baseline_len*step)//step).reshape((dtpts, freq, ch, -1))
+    return data[:, :, :, baseline_len*step:] - baseline
