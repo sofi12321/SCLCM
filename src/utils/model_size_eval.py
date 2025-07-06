@@ -7,6 +7,12 @@ def print_model_size(mdl):
     # print(os.path.getsize("tmp.pt")/1e6)
     os.remove('tmp.pt')
 
+def get_model_size(mdl):
+    torch.save(mdl.state_dict(), "tmp.pt")
+    model_size = os.path.getsize("tmp.pt")/2**20
+    os.remove('tmp.pt')
+    return model_size
+
 
 def count_parameters_detailed(model):
     table = PrettyTable(["Modules", "Parameters"])
@@ -24,3 +30,6 @@ def count_parameters_detailed(model):
 
 def count_parameters_short(model):
     print(sum(p.numel() for p in model.parameters()))
+
+def get_parameters_num(model):
+    return sum(p.numel() for p in model.parameters())
