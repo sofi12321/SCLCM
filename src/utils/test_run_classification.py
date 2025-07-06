@@ -131,7 +131,8 @@ def run_classification(device,
     finetuning_acc.append(cur_acc)
     best_loss = cur_loss
     prev_loss = cur_loss
-    torch.save(final_model.state_dict(), save_final_model_path)
+    if save_final_model_path:
+        torch.save(final_model.state_dict(), save_final_model_path)
 
     for epoch in range(1, finetuning_epochs + 1):
         print("Epoch", epoch)
