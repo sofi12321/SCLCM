@@ -35,9 +35,9 @@ def eval_quantization(model_quantized, test_loader_ft, num_classes, device='cpu'
     print()
 
     # Evaluate performance
-    criterion = nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss()
     if num_classes == 2:
-        criterion = nn.BCEWithLogitsLoss()
+        criterion = torch.nn.BCEWithLogitsLoss()
 
     start_time = time.time()
     cur_loss, cur_acc = test_classification(model_quantized, device, test_loader_ft, criterion)
@@ -62,9 +62,9 @@ def compare_quantization(model_init, model_quantized, test_loader_ft, num_classe
         print(f"Number of trainable parameters changed from {total_params_init} to {total_params}, or by {round(total_params_init / total_params, 2)} times")
 
     # Evaluate performance
-    criterion = nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss()
     if num_classes == 2:
-        criterion = nn.BCEWithLogitsLoss()
+        criterion = torch.nn.BCEWithLogitsLoss()
 
     start_time = time.time()
     loss_init, acc_init = test_classification(model_init, device, test_loader_ft, criterion)
