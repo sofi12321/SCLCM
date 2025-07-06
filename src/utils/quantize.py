@@ -1,7 +1,7 @@
 import copy
 import time
 import torch
-from torch.quantization import quantize_fx
+from torch.quantization import quantize_fx, get_default_qconfig
 from utils.model_size_eval import print_model_size, count_parameters_detailed, count_parameters_short, get_model_size, get_parameters_num
 from utils.test_run_classification import test_classification
 
@@ -10,7 +10,7 @@ def quantize_model(ft_model, test_loader_ft, device = 'cpu', backend = "fbgemm")
     model_static_quantized.to(device)
     model_static_quantized.eval()
 
-    qconfig_dict = {"": torch.quantization.get_default_qconfig(backend)}
+    qconfig_dict = {"": get_default_qconfig(backend)}
     # qconfig_dict = {"": torch.quantization.QConfig(
     #             activation=HistogramObserver,
     #             weight=PerChannelMinMaxObserver.with_args(dtype=torch.qint8, qscheme=torch.per_channel_symmetric)
