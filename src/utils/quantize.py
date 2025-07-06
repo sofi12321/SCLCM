@@ -4,7 +4,7 @@ from torch.quantization import quantize_fx
 from utils.model_size_eval import print_model_size, count_parameters, count_parameters_short, get_model_size, get_parameters_num
 from utils.test_run_classification import test_classification
 
-def quantize_model(ft_model, test_loader_ft, device = 'cpu', backend = "fbgemm")
+def quantize_model(ft_model, test_loader_ft, device = 'cpu', backend = "fbgemm"):
     model_static_quantized = copy.deepcopy(ft_model)
     model_static_quantized.to(device)
     model_static_quantized.eval()
