@@ -1,5 +1,6 @@
 import copy
 import time
+import torch
 from torch.quantization import quantize_fx
 from utils.model_size_eval import print_model_size, count_parameters_detailed, count_parameters_short, get_model_size, get_parameters_num
 from utils.test_run_classification import test_classification
