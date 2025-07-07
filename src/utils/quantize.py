@@ -15,13 +15,13 @@ def quantize_model(ft_model, test_loader_ft, device = 'cpu', backend = "fbgemm")
     #             activation=HistogramObserver,
     #             weight=PerChannelMinMaxObserver.with_args(dtype=torch.qint8, qscheme=torch.per_channel_symmetric)
     #         )}
-    example_inputs = next(iter(test_loader_ft))['data']
+    example_inputs = next(iter(test_loader_ft))['data'].to(device)
     # Prepare
     model_prepared = quantize_fx.prepare_fx(model_static_quantized, qconfig_dict, example_inputs)
     # Calibrate - Use representative (validation) data.
     with torch.inference_mode():
         for _ in range(5):
-            x = next(iter(test_loader_ft))['data']
+            x = next(iter(test_loader_ft))['data'].to(device)
             model_prepared(x)
     # Quantize
     model_quantized = quantize_fx.convert_fx(model_prepared)
