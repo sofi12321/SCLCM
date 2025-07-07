@@ -11,13 +11,13 @@ class SmallCNN2d(nn.Module):
         super(SmallCNN2d, self).__init__()
         # in_features = 119040
         self.cn = nn.Sequential(
-            nn.Conv2d(in_channels, 64, 3, padding = "same"),
+            nn.Conv2d(in_channels, 64, 3, padding = (1,1)),
             nn.LeakyReLU(),
             nn.MaxPool2d(2, stride = 2),
             nn.BatchNorm2d(64),
             nn.Dropout(p = 0.2),
 
-            nn.Conv2d(64, 128, 3, padding = "same"),
+            nn.Conv2d(64, 128, 3, padding = (1,1)),
             nn.LeakyReLU(),
             nn.MaxPool2d(2, stride = 2),
             nn.BatchNorm2d(128),
