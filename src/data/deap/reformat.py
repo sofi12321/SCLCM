@@ -1,4 +1,4 @@
-from data.deap.load_row import load_deap_raw
+from data.deap.load_raw import load_deap_raw
 
 def reformat_deap(data_path):
     # Reformating is made by loading raw data
