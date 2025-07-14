@@ -24,19 +24,28 @@ mkdir outputs
 from data.general.metadata import general_metadata, datasets_metadata
 from utils.run_pipeline import run_pipeline
 
-# Run pipeline with default parameters
-run_pipeline(
-    num_exp="exp1", 
-    dataset_selection="your_dataset", 
-    general_metadata=general_metadata, 
-    dataset_metadata=datasets_metadata,
-    emb_dim=128,
-    channels_cut=None,
-    in_features=None,
-    pretraining_epochs=200,
-    finetuning_epochs=200
-)
-```
+num_exp = "experiment_seed_de"
+# Select dataset
+dataset_selection = "seed_de"
+dataset_metadata = datasets_metadata[dataset_selection]
+
+# Run pipeline
+run_pipeline(num_exp,
+            dataset_selection,
+            general_metadata,
+            dataset_metadata, 
+            emb_dim=128,
+            model_dim=None,
+            channels_cut=None,
+            in_features=None,
+            seed=21,
+            pretraining_epochs = 2, pretraining_wait_epochs = 25, 
+            finetuning_epochs = 2, finetuning_wait_epochs = 25, 
+            sensitivity_early_stop = 1.00001, sensitivity_save_weights = 1.00001,
+            save_weights_path = "model_weights/",
+            need_lr_scheduler=False,
+            need_encoder_freezing=False
+)```
 
 ### Jupyter Notebook Tutorial
 A step-by-step tutorial is available in `tutorials/run_pipeline.ipynb` demonstrating:
