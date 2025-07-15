@@ -45,7 +45,8 @@ run_pipeline(num_exp,
             save_weights_path = "model_weights/",
             need_lr_scheduler=False,
             need_encoder_freezing=False
-)```
+)
+```
 
 ### Jupyter Notebook Tutorial
 A step-by-step tutorial is available in `tutorials/run_pipeline.ipynb` demonstrating:
