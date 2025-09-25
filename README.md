@@ -115,6 +115,8 @@ A convolutional encoder with a subsequent classifier was used as a model. This a
 
 Since the model was trained using SSL we applied post-training static quantization with a symmetric linear mapping of the absolute maximum to reduce its size.
 
+Moreover, we iteratively applied the DeepLIFT XAI method to identify and remove EEG channels and frequency bands with minimal or irrelevant contributions, improving training and inference efficiency and reducing computational load and model complexity without compromising predictive performance.
+
 ## Citation
 
 If you use this code in your research, please cite:
