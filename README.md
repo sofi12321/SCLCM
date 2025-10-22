@@ -1,5 +1,6 @@
 # SCLCM: Simple Contrastive Learning based Convolutional Model for EEG Emotion Recognition with Data and Model Size Reduction
 
+
 ## Installation
 
 ### Prerequisites
